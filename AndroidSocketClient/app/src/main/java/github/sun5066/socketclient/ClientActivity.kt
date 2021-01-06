@@ -4,28 +4,43 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import github.sun5066.socketclient.adapter.ChatRecyclerAdapter
 import github.sun5066.socketclient.adapter.ChatViewModel
+import github.sun5066.socketclient.databinding.ActivityClientBinding
 import github.sun5066.socketclient.model.ChatData
+import github.sun5066.socketclient.network.ChatSocketHandler
 import kotlin.concurrent.thread
+
 
 class ClientActivity : AppCompatActivity(), View.OnClickListener {
     /****************************************************************/
     private val TAG = this.javaClass.simpleName
+    private val CONNECT_PORT = 1004
+    private val KEY_IP = "ip"
 
-    private lateinit var mTxtSend: EditText
+    private val mBinding: ActivityClientBinding by lazy {
+        DataBindingUtil.setContentView(
+            this,
+            R.layout.activity_client
+        )
+    }
 
     //    private val mChatSocketHandler = ChatSocketHandler.getInstance()
     private lateinit var mChatRecyclerAdapter: ChatRecyclerAdapter
-    private lateinit var mChatViewModel: ChatViewModel
+    private val mChatViewModel: ChatViewModel by lazy {
+        ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory(application)
+        ).get(ChatViewModel::class.java)
+    }
     private lateinit var mRecyclerView: RecyclerView
+    private val mChatSocketHandler = ChatSocketHandler.getInstance()
 
     /****************************************************************/
 
@@ -38,33 +53,29 @@ class ClientActivity : AppCompatActivity(), View.OnClickListener {
         StrictMode.setThreadPolicy(policy)
 
         // 서버 연결
-        val address = intent.getStringExtra("ip")
+        val address = intent.getStringExtra(KEY_IP)
         address?.let {
-            mChatViewModel =
-                ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory(application))
-                    .get(ChatViewModel::class.java)
-
-            mChatViewModel.run(address, 1004)
+//            ChatSocketHandler.run(address, CONNECT_PORT)
+            mChatSocketHandler.connect(address, CONNECT_PORT)
         }
 
         try {
-            thread { mChatViewModel.read() }
+            thread { mChatSocketHandler.read() }
         } catch (e: Exception) {
             Toast.makeText(this, "예외발생", Toast.LENGTH_SHORT).show()
             Log.d(TAG, "${e.message}")
 
-            mChatViewModel.close()
+            mChatSocketHandler.close()
         }
 
-        mTxtSend = findViewById(R.id.txt_send)
-        findViewById<Button>(R.id.btn_send).setOnClickListener(this)
+        mBinding.btnSend.setOnClickListener(this)
         mRecyclerView = findViewById(R.id.recycler_view)
 
         val chatList = mutableListOf<ChatData>()
         mChatRecyclerAdapter = ChatRecyclerAdapter(chatList)
 
-        mChatViewModel.getModel().observe(this, {
-            mChatRecyclerAdapter = ChatRecyclerAdapter(it)
+        mChatViewModel.getData().observe(this, {
+            mChatRecyclerAdapter.setList(it)
             val layoutManager = LinearLayoutManager(this)
             Log.d(TAG, "Observable - $it")
 
@@ -76,13 +87,13 @@ class ClientActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
-        mChatViewModel.close()
+        mChatSocketHandler.close()
         super.onDestroy()
     }
 
     override fun onClick(v: View?) {
-        val msg = mTxtSend.text.toString()
-        mChatViewModel.sendMessage(msg)
-        mTxtSend.text = null
+        val msg = mBinding.txtSend.text.toString()
+        mChatSocketHandler.sendMessage(msg)
+        mBinding.txtSend.text = null
     }
 }

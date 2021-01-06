@@ -23,13 +23,13 @@ fun main() {
 }
 
 class ClientHandler(private val client: Socket) {
-    private val listType: TypeToken<MutableList<ChatData>> = object :
+    private val mListType: TypeToken<MutableList<ChatData>> = object :
         TypeToken<MutableList<ChatData>>() {}
 
-    private val gson = GsonBuilder().create()
-    private val reader = Scanner(client.getInputStream())
-    private val writer = client.getOutputStream()
-    private val chatList = mutableListOf<ChatData>()
+    private val mGson = GsonBuilder().create()
+    private val mReader = Scanner(client.getInputStream())
+    private val mWriter = client.getOutputStream()
+    private val mChatList = mutableListOf<ChatData>()
 
     fun run() {
         thread { disconnected() }
@@ -37,12 +37,12 @@ class ClientHandler(private val client: Socket) {
 
         while (true) {
             try {
-                val data = reader.nextLine()
+                val data = mReader.nextLine()
                 println(data)
 
-                chatList.add(
+                mChatList.add(
                     ChatData(
-                        id = chatList.size,
+                        id = mChatList.size,
                         name = "client",
                         message = data,
                         isClient = true
@@ -59,8 +59,8 @@ class ClientHandler(private val client: Socket) {
     private fun disconnected() {
         if (!client.isConnected) {
             println("${client.localAddress} : disconnected!")
-            reader.close()
-            writer.close()
+            mReader.close()
+            mWriter.close()
             client.close()
         }
     }
@@ -69,9 +69,9 @@ class ClientHandler(private val client: Socket) {
         val scanner = Scanner(System.`in`)
         while (true) {
             val msg = scanner.nextLine()
-            chatList.add(
+            mChatList.add(
                 ChatData(
-                    id = chatList.size,
+                    id = mChatList.size,
                     name = "server",
                     message = msg.toString(),
                     isClient = false
@@ -81,14 +81,15 @@ class ClientHandler(private val client: Socket) {
         }
     }
 
+    @Deprecated("거의 안쓰는거같은데?")
     private fun write(message: String) {
-        writer.write((message + '\n').toByteArray(Charset.defaultCharset()))
+        mWriter.write((message + '\n').toByteArray(Charset.defaultCharset()))
     }
 
     private fun getList() {
-        val data = gson.toJson(chatList, listType.type)
+        val data = mGson.toJson(mChatList, mListType.type)
         try {
-            writer.write((data + '\n').toByteArray(Charset.defaultCharset()))
+            mWriter.write((data + '\n').toByteArray(Charset.defaultCharset()))
         } catch (e: SocketException) {
             client.close()
             println("접속이 끊겼습니다!")
