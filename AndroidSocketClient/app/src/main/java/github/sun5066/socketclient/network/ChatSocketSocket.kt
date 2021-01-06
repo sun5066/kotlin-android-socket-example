@@ -1,9 +1,9 @@
 package github.sun5066.socketclient.network
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import github.sun5066.socketclient.adapter.ChatNavigator
 import github.sun5066.socketclient.model.ChatData
 import java.io.OutputStream
 import java.net.Socket
@@ -13,11 +13,11 @@ import java.util.*
 /***************************************************************************************************
  * @작성자 김민석
  * @작성일 2021-01-04
- * @설명 소켓으로 서버랑 통신 핸들링했지만, ChatViewModel 으로 이동
+ * @설명 소켓으로 데이터 통신 핸들링하는 클래스
  * @최종수정일 2021-01-06
  **************************************************************************************************/
 //@Deprecated("기능 전부 ChatViewModel 로 이동.")
-class ChatSocketHandler : ChatNavigator {
+class ChatSocketSocket : ChatSocketNavigator {
     /**********************************************************************************************/
     private val TAG = this.javaClass.simpleName
 
@@ -32,21 +32,20 @@ class ChatSocketHandler : ChatNavigator {
         object : TypeToken<MutableList<ChatData>>() {}
     }
 
-    private val mChatList: MutableList<ChatData> = mutableListOf()
     private val mChatLiveData: MutableLiveData<MutableList<ChatData>> = MutableLiveData()
+    public val gChatLiveData: LiveData<MutableList<ChatData>>
+        get() = mChatLiveData
 
     companion object {
-        private var instance: ChatSocketHandler? = null
+        private var instance: ChatSocketSocket? = null
 
         @JvmStatic
         fun getInstance() = instance ?: synchronized(this) {
-            instance ?: ChatSocketHandler().also { instance = it }
+            instance ?: ChatSocketSocket().also { instance = it }
         }
     }
 
     /**********************************************************************************************/
-
-    override fun getData(): MutableLiveData<MutableList<ChatData>> = mChatLiveData
 
     override fun connect(_ip: String, _port: Int) {
         mSocket = Socket(_ip, _port)
@@ -61,9 +60,7 @@ class ChatSocketHandler : ChatNavigator {
                 mReader.nextLine().toString(),
                 mListType.type
             )
-            mChatList.clear()
-            mChatList.addAll(tempList)
-            mChatLiveData.postValue(mChatList)
+            mChatLiveData.postValue(tempList)
         }
     }
 

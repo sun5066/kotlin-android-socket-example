@@ -14,35 +14,34 @@ import github.sun5066.socketclient.adapter.ChatRecyclerAdapter
 import github.sun5066.socketclient.adapter.ChatViewModel
 import github.sun5066.socketclient.databinding.ActivityClientBinding
 import github.sun5066.socketclient.model.ChatData
-import github.sun5066.socketclient.network.ChatSocketHandler
+import github.sun5066.socketclient.network.ChatSocketSocket
 import kotlin.concurrent.thread
 
 
 class ClientActivity : AppCompatActivity(), View.OnClickListener {
-    /****************************************************************/
+    /**********************************************************************************************/
     private val TAG = this.javaClass.simpleName
     private val CONNECT_PORT = 1004
     private val KEY_IP = "ip"
 
-    private val mBinding: ActivityClientBinding by lazy {
-        DataBindingUtil.setContentView(
-            this,
-            R.layout.activity_client
-        )
-    }
-
-    //    private val mChatSocketHandler = ChatSocketHandler.getInstance()
+    private lateinit var mRecyclerView: RecyclerView
     private lateinit var mChatRecyclerAdapter: ChatRecyclerAdapter
+
     private val mChatViewModel: ChatViewModel by lazy {
         ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory(application)
         ).get(ChatViewModel::class.java)
     }
-    private lateinit var mRecyclerView: RecyclerView
-    private val mChatSocketHandler = ChatSocketHandler.getInstance()
+    private val mBinding: ActivityClientBinding by lazy {
+        DataBindingUtil.setContentView(
+            this,
+            R.layout.activity_client
+        )
+    }
+    private val mChatSocketHandler: ChatSocketSocket by lazy { ChatSocketSocket.getInstance() }
 
-    /****************************************************************/
+    /**********************************************************************************************/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

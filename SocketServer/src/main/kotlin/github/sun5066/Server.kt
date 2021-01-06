@@ -57,11 +57,14 @@ class ClientHandler(private val client: Socket) {
     }
 
     private fun disconnected() {
-        if (!client.isConnected) {
-            println("${client.localAddress} : disconnected!")
-            mReader.close()
-            mWriter.close()
-            client.close()
+        while (true) {
+            if (client.isClosed) {
+                println("${client.localAddress} : disconnected!")
+                mReader.close()
+                mWriter.close()
+                client.close()
+                break
+            }
         }
     }
 
