@@ -17,10 +17,8 @@ import java.util.*
  * @최종수정일 2021-01-07
  **************************************************************************************************/
 //@Deprecated("기능 전부 ChatViewModel 로 이동.")
-class ChatSocketSocket : ChatSocketNavigator {
+class ChatSocketHandler : ChatSocketNavigator {
     /**********************************************************************************************/
-    private val TAG = this.javaClass.simpleName
-
     private lateinit var mSocket: Socket
     private lateinit var mReader: Scanner
     private lateinit var mWriter: OutputStream
@@ -33,15 +31,14 @@ class ChatSocketSocket : ChatSocketNavigator {
     }
 
     private val mChatLiveData: MutableLiveData<MutableList<ChatData>> = MutableLiveData()
-    public val gChatLiveData: LiveData<MutableList<ChatData>>
-        get() = mChatLiveData
+    public val gChatLiveData: LiveData<MutableList<ChatData>> get() = mChatLiveData
 
     companion object {
-        private var instance: ChatSocketSocket? = null
+        private var sInstance: ChatSocketHandler? = null
 
         @JvmStatic
-        fun getInstance() = instance ?: synchronized(this) {
-            instance ?: ChatSocketSocket().also { instance = it }
+        fun getInstance() = sInstance ?: synchronized(this) {
+            sInstance ?: ChatSocketHandler().also { sInstance = it }
         }
     }
 
@@ -55,12 +52,14 @@ class ChatSocketSocket : ChatSocketNavigator {
     }
 
     override fun read() {
-        while (mIsConnected) {
-            val tempList: MutableList<ChatData> = mGson.fromJson(
-                mReader.nextLine().toString(),
-                mListType.type
-            )
-            mChatLiveData.postValue(tempList)
+        if (::mReader.isInitialized) {
+            while (mIsConnected) {
+                val tempList: MutableList<ChatData> = mGson.fromJson(
+                    mReader.nextLine().toString(),
+                    mListType.type
+                )
+                mChatLiveData.postValue(tempList)
+            }
         }
     }
 
@@ -72,7 +71,7 @@ class ChatSocketSocket : ChatSocketNavigator {
     }
 
     override fun sendMessage(msg: String) {
-        if (mIsConnected) {
+        if (::mWriter.isInitialized && mIsConnected) {
             mWriter.write((msg + '\n').toByteArray(Charset.defaultCharset()))
         }
     }
