@@ -30,6 +30,8 @@ class ClientHandler(private val client: Socket) {
     private val mReader = Scanner(client.getInputStream())
     private val mWriter = client.getOutputStream()
     private val mChatList = mutableListOf<ChatData>()
+    private var mSendCount = 0
+    private var mReceiveCount = 0
 
     fun run() {
         thread { disconnected() }
@@ -38,6 +40,8 @@ class ClientHandler(private val client: Socket) {
         while (true) {
             try {
                 val data = mReader.nextLine()
+                val isToil = mReceiveCount == 0
+                mSendCount = 0
                 println(data)
 
                 mChatList.add(
@@ -45,7 +49,8 @@ class ClientHandler(private val client: Socket) {
                         id = mChatList.size,
                         name = "client",
                         message = data,
-                        isClient = true
+                        isClient = true,
+                        isToil = isToil
                     )
                 )
                 this.getList()
@@ -72,14 +77,19 @@ class ClientHandler(private val client: Socket) {
         val scanner = Scanner(System.`in`)
         while (true) {
             val msg = scanner.nextLine()
+            val isToil = mSendCount == 0
+            mReceiveCount = 0
+
             mChatList.add(
                 ChatData(
                     id = mChatList.size,
                     name = "server",
                     message = msg.toString(),
-                    isClient = false
+                    isClient = false,
+                    isToil = isToil
                 )
             )
+            mSendCount++
             this.getList()
         }
     }

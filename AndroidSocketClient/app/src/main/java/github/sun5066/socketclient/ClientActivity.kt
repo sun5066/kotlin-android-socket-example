@@ -1,9 +1,11 @@
 package github.sun5066.socketclient
 
+import android.app.ActionBar
 import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -40,6 +42,7 @@ class ClientActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         // setContentView(R.layout.activity_client) 바인딩 때문에 필요없음.
         mBinding = ActivityClientBinding.inflate(layoutInflater)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         setContentView(mBinding.root)
 
         mBinding.lifecycleOwner = this
