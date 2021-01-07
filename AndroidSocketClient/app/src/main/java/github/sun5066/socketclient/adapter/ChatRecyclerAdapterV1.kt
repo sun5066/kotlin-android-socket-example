@@ -17,9 +17,9 @@ import github.sun5066.socketclient.model.ChatData
  **************************************************************************************************/
 @Deprecated("코드 수정을 위한 예비용")
 class ChatRecyclerAdapterV1(private var mChatList: MutableList<ChatData>) :
-    RecyclerView.Adapter<ChatRecyclerAdapterV1.ChatHolder?>(), ChatRecyclerNavigator {
+    RecyclerView.Adapter<ChatRecyclerAdapterV1.ChatHolder?>() {
 
-    override fun setList(mChatList: MutableList<ChatData>) {
+    fun setList(mChatList: MutableList<ChatData>) {
         this.mChatList = mChatList
     }
 

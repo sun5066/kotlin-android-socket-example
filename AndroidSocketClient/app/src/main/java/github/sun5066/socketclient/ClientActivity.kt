@@ -6,13 +6,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import github.sun5066.socketclient.adapter.ChatRecyclerAdapterV1
 import github.sun5066.socketclient.adapter.ChatRecyclerAdapterV2
-import github.sun5066.socketclient.adapter.ChatRecyclerNavigator
 import github.sun5066.socketclient.adapter.ChatViewModel
 import github.sun5066.socketclient.databinding.ActivityClientBinding
 import github.sun5066.socketclient.model.ChatData
@@ -27,7 +23,8 @@ class ClientActivity : AppCompatActivity(), View.OnClickListener {
     private val CONNECT_PORT = 1004
     private val KEY_IP = "ip"
 
-    private lateinit var mChatRecyclerAdapter: ChatRecyclerNavigator
+    private lateinit var mBinding: ActivityClientBinding
+    private lateinit var mChatRecyclerAdapter: ChatRecyclerAdapterV2
 
     private val mChatViewModel: ChatViewModel by lazy {
         ViewModelProvider(
@@ -35,7 +32,6 @@ class ClientActivity : AppCompatActivity(), View.OnClickListener {
             ViewModelProvider.AndroidViewModelFactory(application)
         ).get(ChatViewModel::class.java)
     }
-    private lateinit var mBinding: ActivityClientBinding
     private val mChatSocketHandler: ChatSocketNavigator by lazy { ChatSocketHandler.getInstance() }
 
     /**********************************************************************************************/
@@ -79,8 +75,8 @@ class ClientActivity : AppCompatActivity(), View.OnClickListener {
             Log.d(TAG, "Observable - $it")
 
             mBinding.recyclerView.layoutManager = layoutManager
-            mBinding.recyclerView.adapter = (mChatRecyclerAdapter as ChatRecyclerAdapterV2).getAdapter()
-            mBinding.recyclerView.scrollToPosition((mChatRecyclerAdapter as ChatRecyclerAdapterV2).getAdapter().itemCount - 1)
+            mBinding.recyclerView.adapter = mChatRecyclerAdapter
+            mBinding.recyclerView.scrollToPosition(mChatRecyclerAdapter.itemCount - 1)
         })
     }
 

@@ -12,13 +12,11 @@ import github.sun5066.socketclient.model.ChatData
  * 설명 dataBinding 으로 어댑터 아이템 관리
  **************************************************************************************************/
 class ChatRecyclerAdapterV2(private var mChatList: MutableList<ChatData>) :
-    RecyclerView.Adapter<ChatRecyclerAdapterV2.ChatHolder?>(), ChatRecyclerNavigator {
+    RecyclerView.Adapter<ChatRecyclerAdapterV2.ChatHolder?>() {
 
-    override fun setList(mChatList: MutableList<ChatData>) {
+    fun setList(mChatList: MutableList<ChatData>) {
         this.mChatList = mChatList
     }
-
-    fun getAdapter(): RecyclerView.Adapter<ChatRecyclerAdapterV2.ChatHolder?> = this
 
     override fun onCreateViewHolder(_parent: ViewGroup, _viewType: Int): ChatHolder {
         val layoutInflater = LayoutInflater.from(_parent.context)
