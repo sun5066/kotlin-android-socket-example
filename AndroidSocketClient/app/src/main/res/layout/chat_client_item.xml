@@ -9,6 +9,10 @@
         <variable
             name="chatItem"
             type="github.sun5066.socketclient.model.ChatData" />
+
+        <variable
+            name="viewModel"
+            type="github.sun5066.socketclient.adapter.ChatViewModel" />
     </data>
 
     <LinearLayout
@@ -28,9 +32,11 @@
                 android:id="@+id/img_target_profile"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
+                android:visibility="@{chatItem.isTail() ? View.VISIBLE : View.GONE}"
                 app:srcCompat="@drawable/ic_account_circle_black_24dp" />
 
             <LinearLayout
+                setMarginLeft="@{chatItem.isTail() ? 0 : 108}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -39,13 +45,14 @@
                     android:id="@+id/txt_target_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{chatItem.name}" />
+                    android:text="@{chatItem.name}"
+                    android:visibility="@{chatItem.isTail() ? View.VISIBLE : View.GONE}" />
 
                 <TextView
                     android:id="@+id/txt_target_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@{chatItem.isToil() ? @drawable/message_chat_others : @drawable/message_chat_mine}"
+                    android:background="@{chatItem.isTail() ? @drawable/message_chat_others : @drawable/bg_white_radius_8}"
                     android:padding="12dp"
                     android:text="@{chatItem.message}" />
             </LinearLayout>
@@ -61,9 +68,10 @@
 
             <TextView
                 android:id="@+id/txt_me_message"
+                setOnClickListener="@{viewModel.clickListener}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@{chatItem.isToil() ? @drawable/message_chat_mine : @drawable/message_chat_others}"
+                android:background="@{chatItem.isTail() ? @drawable/message_chat_mine : @drawable/bg_purple_radius_8}"
                 android:padding="12dp"
                 android:text="@{chatItem.message}" />
         </LinearLayout>

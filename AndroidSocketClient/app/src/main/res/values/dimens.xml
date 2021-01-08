@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  필요없는 파일  -->
+    <dimen name="activity_marginLeft_0">0dp</dimen>
+    <dimen name="activity_marginLeft_36">36dp</dimen>
+</resources>

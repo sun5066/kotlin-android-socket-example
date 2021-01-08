@@ -1,7 +1,6 @@
 package github.sun5066.socketclient.network
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.databinding.ObservableField
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import github.sun5066.socketclient.model.ChatData
@@ -17,7 +16,7 @@ import java.util.*
  * @최종수정일 2021-01-07
  **************************************************************************************************/
 //@Deprecated("기능 전부 ChatViewModel 로 이동.")
-class ChatSocketHandler : ChatSocketNavigator {
+object ChatSocketHelper : ChatSocketNavigator {
     /**********************************************************************************************/
     private lateinit var mSocket: Socket
     private lateinit var mReader: Scanner
@@ -26,21 +25,13 @@ class ChatSocketHandler : ChatSocketNavigator {
 
     private val mGson by lazy { GsonBuilder().create() }
     private val mListType: TypeToken<MutableList<ChatData>> by lazy {
-        // 싱글톤은 처음 사용할때 생성하는게 나을꺼같다.
+        // 싱글톤 생성은 최초로 사용할때 생성하는게 나을꺼같다.
         object : TypeToken<MutableList<ChatData>>() {}
     }
 
-    private val mChatLiveData: MutableLiveData<MutableList<ChatData>> = MutableLiveData()
-    public val gChatLiveData: LiveData<MutableList<ChatData>> get() = mChatLiveData
-
-    companion object {
-        private var sInstance: ChatSocketHandler? = null
-
-        @JvmStatic
-        fun getInstance() = sInstance ?: synchronized(this) {
-            sInstance ?: ChatSocketHandler().also { sInstance = it }
-        }
-    }
+    private val mChatLiveData: ObservableField<MutableList<ChatData>> =
+        ObservableField(mutableListOf())
+    public val gChatLiveData: MutableList<ChatData>? get() = mChatLiveData.get()
 
     /**********************************************************************************************/
 
@@ -58,7 +49,7 @@ class ChatSocketHandler : ChatSocketNavigator {
                     mReader.nextLine().toString(),
                     mListType.type
                 )
-                mChatLiveData.postValue(tempList)
+                mChatLiveData.set(tempList)
             }
         }
     }

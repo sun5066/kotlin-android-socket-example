@@ -7,9 +7,9 @@ import github.sun5066.socketclient.databinding.ChatClientItemBinding
 import github.sun5066.socketclient.model.ChatData
 
 /***************************************************************************************************
- * 작성자 김민석
- * 작성일 2021-01-07
- * 설명 dataBinding 으로 어댑터 아이템 관리
+ * @작성자 김민석
+ * @작성일 2021-01-07
+ * @설명 dataBinding 으로 어댑터 아이템 설정
  **************************************************************************************************/
 class ChatRecyclerAdapterV2(private var mChatList: MutableList<ChatData>) :
     RecyclerView.Adapter<ChatRecyclerAdapterV2.ChatHolder?>() {

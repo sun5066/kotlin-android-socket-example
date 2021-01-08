@@ -1,6 +1,5 @@
 package github.sun5066.socketclient
 
-import android.app.ActionBar
 import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
@@ -14,8 +13,7 @@ import github.sun5066.socketclient.adapter.ChatRecyclerAdapterV2
 import github.sun5066.socketclient.adapter.ChatViewModel
 import github.sun5066.socketclient.databinding.ActivityClientBinding
 import github.sun5066.socketclient.model.ChatData
-import github.sun5066.socketclient.network.ChatSocketHandler
-import github.sun5066.socketclient.network.ChatSocketNavigator
+import github.sun5066.socketclient.network.ChatSocketHelper
 import kotlin.concurrent.thread
 
 
@@ -34,7 +32,6 @@ class ClientActivity : AppCompatActivity(), View.OnClickListener {
             ViewModelProvider.AndroidViewModelFactory(application)
         ).get(ChatViewModel::class.java)
     }
-    private val mChatSocketHandler: ChatSocketNavigator by lazy { ChatSocketHandler.getInstance() }
 
     /**********************************************************************************************/
 
@@ -55,43 +52,43 @@ class ClientActivity : AppCompatActivity(), View.OnClickListener {
         // 서버 연결
         val address = intent.getStringExtra(KEY_IP)
         address?.let {
-            mChatSocketHandler.connect(address, CONNECT_PORT)
+            ChatSocketHelper.connect(address, CONNECT_PORT)
         }
 
         try {
-            thread { mChatSocketHandler.read() }
+            thread { ChatSocketHelper.read() }
         } catch (e: Exception) {
             Toast.makeText(this, "예외발생", Toast.LENGTH_SHORT).show()
             Log.d(TAG, "${e.message}")
 
-            mChatSocketHandler.close()
+            ChatSocketHelper.close()
         }
         mBinding.btnSend.setOnClickListener(this)
 
-        val chatList = mutableListOf<ChatData>()
-        mChatRecyclerAdapter = ChatRecyclerAdapterV2(chatList)
-//        mBinding.recyclerView.adapter = mChatRecyclerAdapter
-
-        mChatViewModel.getChatLiveData().observe(this, {
-            mChatRecyclerAdapter.setList(it)
-            val layoutManager = LinearLayoutManager(this)
-            Log.d(TAG, "Observable - $it")
-
-            mBinding.recyclerView.layoutManager = layoutManager
-            mBinding.recyclerView.adapter = mChatRecyclerAdapter
-            mBinding.recyclerView.scrollToPosition(mChatRecyclerAdapter.itemCount - 1)
-        })
+//        val chatList = mutableListOf<ChatData>()
+//        mChatRecyclerAdapter = ChatRecyclerAdapterV2(chatList)
+////        mBinding.recyclerView.adapter = mChatRecyclerAdapter
+//
+//        mChatViewModel.getChatLiveData()?.observe(this, {
+//            mChatRecyclerAdapter.setList(it)
+//            val layoutManager = LinearLayoutManager(this)
+//            Log.d(TAG, "Observable - $it")
+//
+//            mBinding.recyclerView.layoutManager = layoutManager
+//            mBinding.recyclerView.adapter = mChatRecyclerAdapter
+//            mBinding.recyclerView.scrollToPosition(mChatRecyclerAdapter.itemCount - 1)
+//        })
     }
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
-        mChatSocketHandler.close()
+        ChatSocketHelper.close()
         super.onDestroy()
     }
 
     override fun onClick(v: View?) {
         val msg = mBinding.txtSend.text.toString()
-        mChatSocketHandler.sendMessage(msg)
+        ChatSocketHelper.sendMessage(msg)
         mBinding.txtSend.text = null
     }
 }

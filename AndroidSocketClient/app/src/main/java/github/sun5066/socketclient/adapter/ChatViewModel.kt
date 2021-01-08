@@ -1,11 +1,15 @@
 package github.sun5066.socketclient.adapter
 
+import android.util.Log
+import android.view.View
+import android.widget.Toast
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import github.sun5066.socketclient.R
 import github.sun5066.socketclient.model.ChatData
-import github.sun5066.socketclient.network.ChatSocketHandler
+import github.sun5066.socketclient.network.ChatSocketHelper
 
 /***************************************************************************************************
  * @작성자 sun5066(김민석)
@@ -16,13 +20,24 @@ import github.sun5066.socketclient.network.ChatSocketHandler
 class ChatViewModel : ViewModel() {
     private val TAG = this.javaClass.simpleName
 
-    private val mChatLiveData: MutableLiveData<MutableList<ChatData>> = MutableLiveData()
-    var m_btnText: ObservableField<String> = ObservableField("전송!")
-
-    init {
-        mChatLiveData.value = mutableListOf()
+    val clickListener = View.OnClickListener { _view ->
+        when (_view.id) {
+            R.id.txt_me_message -> {
+                Toast.makeText(_view.context, "ㅎㅇㅎㅇ", Toast.LENGTH_SHORT).show()
+            }
+            R.id.txt_target_message -> {
+                Toast.makeText(_view.context, "ㅎㅇㅎㅇ", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
-    fun getChatLiveData(): LiveData<MutableList<ChatData>> =
-        ChatSocketHandler.getInstance().gChatLiveData
+    var m_btnText: ObservableField<String> = ObservableField("전송!")
+    var mChatLiveData: ObservableField<MutableList<ChatData>> =
+        ObservableField(ChatSocketHelper.gChatLiveData)
+
+//    fun getChatLiveData(): LiveData<MutableList<ChatData>>? {
+//        val liveData: MutableLiveData<MutableList<ChatData>>? = null
+//        liveData?.value = mChatLiveData.get()
+//        return liveData
+//    }
 }

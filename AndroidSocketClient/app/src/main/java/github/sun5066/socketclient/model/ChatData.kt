@@ -5,5 +5,5 @@ data class ChatData(
     var name: String? = "",
     var message: String? = "",
     var isClient: Boolean? = false,
-    var isToil: Boolean? = false
+    var isTail: Boolean? = false
 )
