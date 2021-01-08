@@ -22,13 +22,13 @@ fun main() {
     }
 }
 
-class ClientHandler(private val client: Socket) {
+class ClientHandler(private val mClient: Socket) {
     private val mListType: TypeToken<MutableList<ChatData>> = object :
         TypeToken<MutableList<ChatData>>() {}
 
     private val mGson = GsonBuilder().create()
-    private val mReader = Scanner(client.getInputStream())
-    private val mWriter = client.getOutputStream()
+    private val mReader = Scanner(mClient.getInputStream())
+    private val mWriter = mClient.getOutputStream()
     private val mChatList = mutableListOf<ChatData>()
     private var mSendCount = 0
     private var mReceiveCount = 0
@@ -40,7 +40,7 @@ class ClientHandler(private val client: Socket) {
         while (true) {
             try {
                 val data = mReader.nextLine()
-                val isToil = mReceiveCount == 0
+                val isTail = mReceiveCount == 0
                 mSendCount = 0
                 println(data)
 
@@ -50,12 +50,13 @@ class ClientHandler(private val client: Socket) {
                         name = "client",
                         message = data,
                         isClient = true,
-                        isToil = isToil
+                        isTail = isTail
                     )
                 )
+                mReceiveCount++
                 this.getList()
             } catch (ex: Exception) {
-                client.close()
+                mClient.close()
                 break
             }
         }
@@ -63,11 +64,11 @@ class ClientHandler(private val client: Socket) {
 
     private fun disconnected() {
         while (true) {
-            if (client.isClosed) {
-                println("${client.localAddress} : disconnected!")
+            if (mClient.isClosed) {
+                println("${mClient.localAddress} : disconnected!")
                 mReader.close()
                 mWriter.close()
-                client.close()
+                mClient.close()
                 break
             }
         }
@@ -77,7 +78,7 @@ class ClientHandler(private val client: Socket) {
         val scanner = Scanner(System.`in`)
         while (true) {
             val msg = scanner.nextLine()
-            val isToil = mSendCount == 0
+            val isTail = mSendCount == 0
             mReceiveCount = 0
 
             mChatList.add(
@@ -86,7 +87,7 @@ class ClientHandler(private val client: Socket) {
                     name = "server",
                     message = msg.toString(),
                     isClient = false,
-                    isToil = isToil
+                    isTail = isTail
                 )
             )
             mSendCount++
@@ -94,7 +95,6 @@ class ClientHandler(private val client: Socket) {
         }
     }
 
-    @Deprecated("거의 안쓰는거같은데?")
     private fun write(message: String) {
         mWriter.write((message + '\n').toByteArray(Charset.defaultCharset()))
     }
@@ -104,7 +104,9 @@ class ClientHandler(private val client: Socket) {
         try {
             mWriter.write((data + '\n').toByteArray(Charset.defaultCharset()))
         } catch (e: SocketException) {
-            client.close()
+            mReader.close()
+            mWriter.close()
+            mClient.close()
             println("접속이 끊겼습니다!")
         }
         println(data)
