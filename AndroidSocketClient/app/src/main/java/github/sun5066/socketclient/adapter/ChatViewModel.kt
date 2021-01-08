@@ -1,11 +1,9 @@
 package github.sun5066.socketclient.adapter
 
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import github.sun5066.socketclient.R
 import github.sun5066.socketclient.model.ChatData
@@ -32,12 +30,5 @@ class ChatViewModel : ViewModel() {
     }
 
     var m_btnText: ObservableField<String> = ObservableField("전송!")
-    var mChatLiveData: ObservableField<MutableList<ChatData>> =
-        ObservableField(ChatSocketHelper.gChatLiveData)
-
-//    fun getChatLiveData(): LiveData<MutableList<ChatData>>? {
-//        val liveData: MutableLiveData<MutableList<ChatData>>? = null
-//        liveData?.value = mChatLiveData.get()
-//        return liveData
-//    }
+    var mChatLiveData: LiveData<MutableList<ChatData>> = ChatSocketHelper.gChatLiveData
 }

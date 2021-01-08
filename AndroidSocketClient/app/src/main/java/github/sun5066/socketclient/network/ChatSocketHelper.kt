@@ -1,6 +1,8 @@
 package github.sun5066.socketclient.network
 
 import androidx.databinding.ObservableField
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import github.sun5066.socketclient.model.ChatData
@@ -29,9 +31,13 @@ object ChatSocketHelper : ChatSocketNavigator {
         object : TypeToken<MutableList<ChatData>>() {}
     }
 
-    private val mChatLiveData: ObservableField<MutableList<ChatData>> =
-        ObservableField(mutableListOf())
-    public val gChatLiveData: MutableList<ChatData>? get() = mChatLiveData.get()
+    private val mChatLiveData: MutableLiveData<MutableList<ChatData>> = MutableLiveData()
+    val gChatLiveData: LiveData<MutableList<ChatData>> get() = mChatLiveData
+//        ObservableField(mutableListOf())
+
+    init {
+        mChatLiveData.value = mutableListOf()
+    }
 
     /**********************************************************************************************/
 
@@ -49,7 +55,7 @@ object ChatSocketHelper : ChatSocketNavigator {
                     mReader.nextLine().toString(),
                     mListType.type
                 )
-                mChatLiveData.set(tempList)
+                mChatLiveData.postValue(tempList)
             }
         }
     }
