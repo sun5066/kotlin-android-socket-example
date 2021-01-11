@@ -1,11 +1,8 @@
 package github.sun5066.socketclient.adapter
 
-import android.util.Log
-import android.view.View
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import github.sun5066.socketclient.R
 import github.sun5066.socketclient.model.ChatData
 import github.sun5066.socketclient.network.ChatSocketHelper
 
@@ -18,26 +15,12 @@ import github.sun5066.socketclient.network.ChatSocketHelper
 class ChatViewModel : ViewModel(),
     ChatSocketHelper.ChatHelperListener {
 
-    private val TAG = this.javaClass.simpleName
-
     private val mChatSocketHelper = ChatSocketHelper.getInstance()
     var mButtonText: ObservableField<String> = ObservableField("전송!")
     var mChatLiveData: MutableLiveData<MutableList<ChatData>> = MutableLiveData()
 
     init {
         mChatSocketHelper.setListener(this)
-    }
-
-    val mClickListener = View.OnClickListener { _view ->
-        Log.d(TAG, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
-        when (_view.id) {
-            R.id.txt_me_message -> {
-                Log.d(TAG, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
-            }
-            R.id.txt_target_message -> {
-                Log.d(TAG, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
-            }
-        }
     }
 
     override fun onChatMessage(_data: MutableList<ChatData>) {

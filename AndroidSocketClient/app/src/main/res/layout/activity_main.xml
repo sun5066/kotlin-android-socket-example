@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="horizontal"
-    tools:context=".MainActivity">
+    tools:context=".ui.MainActivity">
 
     <EditText
         android:id="@+id/txt_ip"

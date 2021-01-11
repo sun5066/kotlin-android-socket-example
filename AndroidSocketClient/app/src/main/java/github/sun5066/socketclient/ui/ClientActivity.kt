@@ -1,16 +1,16 @@
-package github.sun5066.socketclient
+package github.sun5066.socketclient.ui
 
-import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import github.sun5066.socketclient.R
 import github.sun5066.socketclient.adapter.ChatViewModel
 import github.sun5066.socketclient.databinding.ActivityClientBinding
 import github.sun5066.socketclient.network.ChatSocketHelper
-import github.sun5066.socketclient.ui.BaseActivity
+import github.sun5066.socketclient.ui.base.BaseActivity
 import kotlin.concurrent.thread
 
 class ClientActivity : BaseActivity<ActivityClientBinding>(), View.OnClickListener {

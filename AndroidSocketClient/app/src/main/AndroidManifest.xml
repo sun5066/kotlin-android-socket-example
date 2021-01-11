@@ -12,11 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ClientActivity"
+            android:name=".ui.ClientActivity"
             android:windowSoftInputMode="stateVisible|adjustResize">
 
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

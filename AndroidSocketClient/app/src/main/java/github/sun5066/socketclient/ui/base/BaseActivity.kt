@@ -1,4 +1,4 @@
-package github.sun5066.socketclient.ui
+package github.sun5066.socketclient.ui.base
 
 import android.os.Bundle
 import androidx.annotation.LayoutRes
