@@ -50,6 +50,7 @@
 
                 <TextView
                     android:id="@+id/txt_target_message"
+                    setOnClickListener="@{viewModel.mClickListener}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@{chatItem.isTail() ? @drawable/message_chat_others : @drawable/bg_white_radius_8}"
@@ -68,7 +69,7 @@
 
             <TextView
                 android:id="@+id/txt_me_message"
-                setOnClickListener="@{viewModel.clickListener}"
+                setOnClickListener="@{viewModel.mClickListener}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@{chatItem.isTail() ? @drawable/message_chat_mine : @drawable/bg_purple_radius_8}"

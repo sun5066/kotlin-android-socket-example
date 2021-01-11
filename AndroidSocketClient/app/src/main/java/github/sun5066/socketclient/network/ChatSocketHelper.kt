@@ -1,8 +1,5 @@
 package github.sun5066.socketclient.network
 
-import androidx.databinding.ObservableField
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import github.sun5066.socketclient.model.ChatData
@@ -18,8 +15,10 @@ import java.util.*
  * @최종수정일 2021-01-07
  **************************************************************************************************/
 //@Deprecated("기능 전부 ChatViewModel 로 이동.")
-object ChatSocketHelper : ChatSocketNavigator {
+class ChatSocketHelper : ChatSocketNavigator {
     /**********************************************************************************************/
+
+    private lateinit var mChatHelperListener: ChatHelperListener
     private lateinit var mSocket: Socket
     private lateinit var mReader: Scanner
     private lateinit var mWriter: OutputStream
@@ -31,15 +30,23 @@ object ChatSocketHelper : ChatSocketNavigator {
         object : TypeToken<MutableList<ChatData>>() {}
     }
 
-    private val mChatLiveData: MutableLiveData<MutableList<ChatData>> = MutableLiveData()
-    val gChatLiveData: LiveData<MutableList<ChatData>> get() = mChatLiveData
-//        ObservableField(mutableListOf())
+    /**********************************************************************************************/
 
-    init {
-        mChatLiveData.value = mutableListOf()
+    companion object {
+        @Volatile
+        private var sInstance: ChatSocketHelper? = null
+
+        @JvmStatic
+        fun getInstance(): ChatSocketHelper = sInstance ?: synchronized(this) {
+            sInstance ?: ChatSocketHelper().also {
+                sInstance = it
+            }
+        }
     }
 
-    /**********************************************************************************************/
+    fun setListener(_listener: ChatHelperListener) {
+        mChatHelperListener = _listener
+    }
 
     override fun connect(_ip: String, _port: Int) {
         mSocket = Socket(_ip, _port)
@@ -55,7 +62,7 @@ object ChatSocketHelper : ChatSocketNavigator {
                     mReader.nextLine().toString(),
                     mListType.type
                 )
-                mChatLiveData.postValue(tempList)
+                mChatHelperListener.onChatMessage(tempList)
             }
         }
     }
@@ -71,5 +78,9 @@ object ChatSocketHelper : ChatSocketNavigator {
         if (::mWriter.isInitialized && mIsConnected) {
             mWriter.write((msg + '\n').toByteArray(Charset.defaultCharset()))
         }
+    }
+
+    interface ChatHelperListener {
+        fun onChatMessage(_data: MutableList<ChatData>)
     }
 }

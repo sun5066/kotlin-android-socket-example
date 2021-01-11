@@ -20,6 +20,7 @@ object CommonBindingAdapter {
     @BindingAdapter("setOnClickListener")
     @JvmStatic
     fun setOnClickListener(_view: View, _listener: View.OnClickListener?) {
+        Log.d("ㅋㅋㅋㅋ", "asdsadasdsdaasdsad")
         _listener?.let { _view.setOnClickListener(it) }
     }
 
