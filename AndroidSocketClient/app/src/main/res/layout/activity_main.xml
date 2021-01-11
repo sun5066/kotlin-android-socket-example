@@ -12,7 +12,7 @@
         android:id="@+id/txt_ip"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:text="125.136.6.85" />
+        android:hint="IP 입력" />
 
     <Button
         android:id="@+id/btn_server_conn"
