@@ -9,8 +9,8 @@ import github.sun5066.socketclient.network.ChatSocketHelper
 /***************************************************************************************************
  * @작성자 sun5066(김민석)
  * @작성일 2021-01-05
- * @설명 소켓으로 서버와 주고받은 데이터 LiveData 로 ClientActivity 가 관찰 할수 있게 해주는 클래스
- * @최종수정일 2021-01-06
+ * @설명 소켓으로 서버와 주고받은 데이터를 LiveData 로 변경후 DataBinding 으로 RecyclerView 에 적용
+ * @최종수정일 2021-01-11
  **************************************************************************************************/
 class ChatViewModel : ViewModel(),
     ChatSocketHelper.ChatHelperListener {
